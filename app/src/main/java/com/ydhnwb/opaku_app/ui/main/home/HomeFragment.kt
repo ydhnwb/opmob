@@ -9,9 +9,11 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.firebase.analytics.FirebaseAnalytics
 import com.ydhnwb.opaku_app.R
 import com.ydhnwb.opaku_app.databinding.FragmentHomeBinding
 import com.ydhnwb.opaku_app.domain.product.entity.ProductEntity
+import com.ydhnwb.opaku_app.infra.SharedPrefs
 import com.ydhnwb.opaku_app.ui.common.extension.gone
 import com.ydhnwb.opaku_app.ui.common.extension.showToast
 import com.ydhnwb.opaku_app.ui.common.extension.visible
@@ -19,6 +21,7 @@ import com.ydhnwb.opaku_app.ui.detail.DetailProductActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import javax.inject.Inject
 
 
 @AndroidEntryPoint
@@ -29,6 +32,12 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
 
+    @Inject
+    lateinit var analytic : FirebaseAnalytics
+
+    @Inject
+    lateinit var sharedPref: SharedPrefs
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -36,6 +45,20 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         setupRecyclerView()
         observe()
         fetchProducts()
+    }
+
+    private fun setProductLog(product: ProductEntity){
+        sharedPref.getUserData()?.let { user ->
+            val bundle = Bundle()
+            bundle.putString(FirebaseAnalytics.Param.METHOD, "product_adapter_on_tap")
+            bundle.putString("product_name", product.name)
+            bundle.putString("product_id", product.id.toString())
+            bundle.putString("product_price", product.price.toString())
+            bundle.putString("user_id", user.id.toString())
+            bundle.putString("user_name", user.name)
+            bundle.putString("user_email", user.email)
+            analytic.logEvent("item_tapped", bundle)
+        }
     }
 
     private fun fetchProducts() = viewModel.fetchAllProducts()
@@ -72,6 +95,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
             override fun onTap(p: ProductEntity) {
                 startActivity(Intent(requireActivity(), DetailProductActivity::class.java).apply {
                     putExtra("product_id", p.id)
+                    setProductLog(p)
                 })
             }
         })

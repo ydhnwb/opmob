@@ -2,16 +2,31 @@ package com.ydhnwb.opaku_app.infra
 
 import android.content.Context
 import android.content.SharedPreferences
+import com.google.gson.Gson
+import com.ydhnwb.opaku_app.domain.profile.entity.UserEntity
 
 @Suppress("UNCHECKED_CAST")
 class SharedPrefs (private val context: Context) {
     companion object {
         private const val PREF = "MyAppPrefName"
         private const val PREF_TOKEN = "user_token"
+        private const val PREF_USER_DATA = "user_data"
     }
 
     private val sharedPref: SharedPreferences = context.getSharedPreferences(PREF, Context.MODE_PRIVATE)
 
+    fun saveUserData(user: UserEntity){
+        val userAsJson = Gson().toJson(user)
+        put(PREF_USER_DATA, userAsJson)
+    }
+
+    fun getUserData() : UserEntity? {
+        val userAsJson =  get(PREF_USER_DATA, String::class.java)
+        if (userAsJson.isNotEmpty()) {
+            return Gson().fromJson(userAsJson, UserEntity::class.java)
+        }
+        return null
+    }
 
     fun saveToken(token: String){
         put(PREF_TOKEN, token)
@@ -48,6 +63,7 @@ class SharedPrefs (private val context: Context) {
     fun clear() {
         sharedPref.edit().run {
             remove(PREF_TOKEN)
+            remove(PREF_USER_DATA)
         }.apply()
     }
 }

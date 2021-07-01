@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "497053134311",
+    "project_id": "opaku-app-cf650",
+    "storage_bucket": "opaku-app-cf650.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:497053134311:android:d7a9073a6928456c962142",
+        "android_client_info": {
+          "package_name": "com.ydhnwb.opaku_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "497053134311-329kagpa18lfs64s0u0uvfpe3tas7tte.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ydhnwb.opaku_app",
+            "certificate_hash": "ebd70861e6cf563db3b7b8f6c36ccfe4615b0a18"
+          }
+        },
+        {
+          "client_id": "497053134311-pmbmlqqjm3g50roj6qibiv9ni9688qcd.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBZeabgsC4YMBfly7Ictji-VHm0zs_5bjU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "497053134311-pmbmlqqjm3g50roj6qibiv9ni9688qcd.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

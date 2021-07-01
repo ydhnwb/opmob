@@ -6,11 +6,14 @@ import androidx.activity.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
+import com.google.firebase.analytics.FirebaseAnalytics
 import com.ydhnwb.opaku_app.R
 import com.ydhnwb.opaku_app.data.register.dto.RegisterRequest
 import com.ydhnwb.opaku_app.databinding.ActivityRegisterBinding
 import com.ydhnwb.opaku_app.domain.common.base.Failure
+import com.ydhnwb.opaku_app.domain.profile.entity.UserEntity
 import com.ydhnwb.opaku_app.domain.register.entity.RegisterEntity
+import com.ydhnwb.opaku_app.infra.DateUtil
 import com.ydhnwb.opaku_app.infra.SharedPrefs
 import com.ydhnwb.opaku_app.ui.common.extension.isEmail
 import com.ydhnwb.opaku_app.ui.common.extension.showGenericAlertDialog
@@ -26,6 +29,9 @@ class RegisterActivity : AppCompatActivity() {
     private val viewModel: RegisterActivityViewModel by viewModels()
 
     @Inject
+    lateinit var analytic: FirebaseAnalytics
+
+    @Inject
     lateinit var sharedPrefs: SharedPrefs
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -35,6 +41,27 @@ class RegisterActivity : AppCompatActivity() {
         back()
         register()
         observe()
+    }
+
+    private fun setRegisterFailedLog(e: Failure, registerRequest: RegisterRequest){
+        val bundle = Bundle()
+        bundle.putString(FirebaseAnalytics.Param.METHOD, "handleErrorRegister")
+        bundle.putString("status", "success_register")
+        bundle.putString("user_name", registerRequest.name)
+        bundle.putString("user_email", registerRequest.email)
+        bundle.putString("timestamp", DateUtil.getCurrentTimeStamp())
+        analytic.logEvent("sign_up_error", bundle)
+    }
+
+    private fun setRegisterSuccessLog(user: RegisterEntity){
+        val bundle = Bundle()
+        bundle.putString(FirebaseAnalytics.Param.METHOD, "handleSuccessRegister")
+        bundle.putString("status", "success_register")
+        bundle.putString("user_id", user.id.toString())
+        bundle.putString("user_name", user.name)
+        bundle.putString("user_email", user.email)
+        bundle.putString("timestamp", DateUtil.getCurrentTimeStamp())
+        analytic.logEvent(FirebaseAnalytics.Event.SIGN_UP, bundle)
     }
 
     private fun register(){
@@ -98,7 +125,7 @@ class RegisterActivity : AppCompatActivity() {
             is RegisterActivityState.ShowToast -> showToast(state.message)
             is RegisterActivityState.IsLoading -> handleLoading(state.isLoading)
             is RegisterActivityState.SuccessRegister -> handleSuccessRegister(state.registerEntity)
-            is RegisterActivityState.ErrorRegister -> handleErrorRegister(state.e)
+            is RegisterActivityState.ErrorRegister -> handleErrorRegister(state.e, state.registerRequest)
             is RegisterActivityState.Init -> Unit
         }
     }
@@ -111,12 +138,16 @@ class RegisterActivity : AppCompatActivity() {
     }
 
     private fun handleSuccessRegister(registerEntity: RegisterEntity){
+        val user = UserEntity(registerEntity.id, registerEntity.name, registerEntity.email)
+        setRegisterSuccessLog(registerEntity)
         sharedPrefs.saveToken(registerEntity.token)
+        sharedPrefs.saveUserData(user)
         setResult(RESULT_OK)
         finish()
     }
 
-    private fun handleErrorRegister(e: Failure){
+    private fun handleErrorRegister(e: Failure, registerRequest: RegisterRequest?){
+        registerRequest?.let { setRegisterFailedLog(e, it) }
         showGenericAlertDialog("${e.message} [${e.code}]")
     }
 

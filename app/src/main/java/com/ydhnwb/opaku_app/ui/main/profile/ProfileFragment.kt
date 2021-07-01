@@ -11,9 +11,11 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import coil.load
+import com.google.firebase.analytics.FirebaseAnalytics
 import com.ydhnwb.opaku_app.R
 import com.ydhnwb.opaku_app.databinding.FragmentProfileBinding
 import com.ydhnwb.opaku_app.domain.profile.entity.UserEntity
+import com.ydhnwb.opaku_app.infra.DateUtil
 import com.ydhnwb.opaku_app.infra.SharedPrefs
 import com.ydhnwb.opaku_app.ui.common.extension.gone
 import com.ydhnwb.opaku_app.ui.common.extension.showToast
@@ -35,9 +37,24 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
     @Inject
     lateinit var sharedPrefs: SharedPrefs
 
+    @Inject
+    lateinit var analytics: FirebaseAnalytics
+
     private val openLoginActivity = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == AppCompatActivity.RESULT_OK) {
             refresh()
+        }
+    }
+
+    private fun setLogoutLog(){
+        val userEntity = sharedPrefs.getUserData()
+        userEntity?.let {
+            val bundle = Bundle()
+            bundle.putInt("user_id", it.id)
+            bundle.putString("user_name", it.name)
+            bundle.putString("user_email", it.email)
+            bundle.putString("timestamp", DateUtil.getCurrentTimeStamp())
+            analytics.logEvent("sign_out", bundle)
         }
     }
 
@@ -48,6 +65,7 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
     }
 
     private fun signOut(){
+        setLogoutLog()
         sharedPrefs.clear()
         checkIsLoggedIn()
     }

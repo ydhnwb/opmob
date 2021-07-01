@@ -48,7 +48,7 @@ class LoginActivityViewModel @Inject constructor(private val loginUseCase: Login
                             state.value = LoginActivityState.SuccessLogin(res.data)
                         }
                         is BaseResult.Error -> {
-                            state.value = LoginActivityState.ErrorLogin(res.err)
+                            state.value = LoginActivityState.ErrorLogin(res.err, loginRequest)
                         }
                     }
                 }
@@ -64,5 +64,5 @@ sealed class LoginActivityState  {
     data class IsLoading(val isLoading: Boolean) : LoginActivityState()
     data class ShowToast(val message: String) : LoginActivityState()
     data class SuccessLogin(val loginEntity: LoginEntity) : LoginActivityState()
-    data class ErrorLogin(val err: Failure) : LoginActivityState()
+    data class ErrorLogin(val err: Failure, val attemptedUser: LoginRequest? = null) : LoginActivityState()
 }

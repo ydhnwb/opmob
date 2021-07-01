@@ -4,8 +4,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ydhnwb.opaku_app.data.transaction.dto.CreateTransactionRequest
 import com.ydhnwb.opaku_app.domain.common.base.BaseResult
+import com.ydhnwb.opaku_app.domain.common.base.Failure
 import com.ydhnwb.opaku_app.domain.product.entity.ProductEntity
 import com.ydhnwb.opaku_app.domain.product.usecase.FindProductByIdUseCase
+import com.ydhnwb.opaku_app.domain.transaction.entity.TransactionEntity
 import com.ydhnwb.opaku_app.domain.transaction.usecase.CreateTransactionUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
@@ -47,9 +49,11 @@ class DetailProductViewModel @Inject constructor(
                     when(res){
                         is BaseResult.Success -> {
                             showToast("Purchase success")
+                            mState.value = DetailProductActivityState.PurchaseSuccess(res.data)
                         }
                         is BaseResult.Error -> {
                             showToast(res.err.message)
+                            mState.value = DetailProductActivityState.PurchaseError(res.err, createTransactionRequest)
                         }
                     }
                 }
@@ -81,6 +85,8 @@ class DetailProductViewModel @Inject constructor(
 
 sealed class DetailProductActivityState {
     object Init: DetailProductActivityState()
+    data class PurchaseSuccess(val transactionEntity: TransactionEntity) : DetailProductActivityState()
+    data class PurchaseError(val e: Failure, val transactionRequest: CreateTransactionRequest) : DetailProductActivityState()
     data class IsLoading(val isLoading: Boolean) : DetailProductActivityState()
     data class ShowToast(val message: String) : DetailProductActivityState()
 }

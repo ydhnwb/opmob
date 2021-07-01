@@ -33,8 +33,8 @@ class RegisterActivityViewModel @Inject constructor(private val registerUseCase:
         state.value = RegisterActivityState.SuccessRegister(registerEntity)
     }
 
-    private fun failedRegister(e: Failure){
-        state.value = RegisterActivityState.ErrorRegister(e)
+    private fun failedRegister(e: Failure, registerRequest: RegisterRequest){
+        state.value = RegisterActivityState.ErrorRegister(e, registerRequest)
     }
 
     fun register(registerRequest: RegisterRequest){
@@ -50,7 +50,7 @@ class RegisterActivityViewModel @Inject constructor(private val registerUseCase:
                 .collect { res ->
                     hideLoading()
                     when(res){
-                        is BaseResult.Error -> failedRegister(res.err)
+                        is BaseResult.Error -> failedRegister(res.err, registerRequest)
                         is BaseResult.Success -> successRegister(res.data)
                     }
                 }
@@ -63,5 +63,5 @@ sealed class RegisterActivityState {
     data class IsLoading(val isLoading: Boolean) : RegisterActivityState()
     data class ShowToast(val message: String) : RegisterActivityState()
     data class SuccessRegister(val registerEntity: RegisterEntity) : RegisterActivityState()
-    data class ErrorRegister(val e: Failure) : RegisterActivityState()
+    data class ErrorRegister(val e: Failure, val registerRequest: RegisterRequest? = null) : RegisterActivityState()
 }
