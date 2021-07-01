@@ -1,0 +1,42 @@
+<resources>
+    <string name="app_name">opaku-app</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
+    <string name="header_login">Sign in</string>
+    <string name="header_desc_login">Sign in to get all the feature from this app.</string>
+    <string name="hint_login_email_edit_text">Email</string>
+    <string name="hint_login_password_edit_text">Password</string>
+    <string name="button_text_login">Login</string>
+    <string name="button_text_dont_have_account">I dont have an account</string>
+    <string name="button_text_back">Go back</string>
+    <string name="header_register">Create account</string>
+    <string name="header_desc_register">Start with filling up this form below</string>
+    <string name="hint_register_name">Name</string>
+    <string name="hint_register_email">Email</string>
+    <string name="hint_register_password">Password</string>
+    <string name="button_text_register">Register</string>
+    <string name="button_text_ok">OK</string>
+    <string name="error_email_not_valid">Email not valid</string>
+    <string name="error_password_not_valid">Password not valid</string>
+    <string name="error_name_not_valid">Name not valid</string>
+    <string name="hint_search">Search</string>
+    <string name="info_not_signed_in">You are not signed in</string>
+    <string name="title_search">Search</string>
+    <string name="title_profile">Profile</string>
+    <string name="button_text_my_transaction">My transaction</string>
+    <string name="button_text_logout">Sign out</string>
+    <string name="title_activity_transaction">Transaction</string>
+    <!-- Strings used for fragments for navigation -->
+    <string name="first_fragment_label">First Fragment</string>
+    <string name="second_fragment_label">Second Fragment</string>
+    <string name="next">Next</string>
+    <string name="previous">Previous</string>
+
+    <string name="hello_first_fragment">Hello first fragment</string>
+    <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
+    <string name="title_activity_detail_product">Detail</string>
+
+    <string name="action_settings">Settings</string>
+    <string name="button_text_purchase">Purchase</string>
+</resources>
