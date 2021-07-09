@@ -1,5 +1,6 @@
 # Documentation.
-Opaku is an e-commerce app that helps user to buy clothes for kid.
+Opaku is a clothing retail company that is engaged in the development, manufacturing, and sells a wide
+variety of products for toddlers.
 
 ## How to run this project?
 This app built using Android Studio version 4.2.2, maybe you need some newer version of the android 
